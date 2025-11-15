@@ -1,48 +1,30 @@
-import { useState, useEffect } from 'react'
+import React, { useState } from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Navbar from './components/Navbar'
+import Home from './pages/Home'
+import Products from './pages/Products'
+import ProductDetail from './pages/ProductDetail'
+import Cart from './pages/Cart'
+import Login from './pages/Login'
+import Register from './pages/Register'
+import NotFound from './pages/NotFound'
 import './App.css'
 
-function App() {
-  const [products, setProducts] = useState([])
-  const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    fetchProducts()
-  }, [])
-
-  const fetchProducts = async () => {
-    setLoading(true)
-    try {
-      const response = await fetch('/api/products')
-      const data = await response.json()
-      setProducts(data)
-    } catch (error) {
-      console.error('Error fetching products:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
+export default function App() {
+  const [cartCount, setCartCount] = useState(0)
 
   return (
-    <div className="App">
-      <h1>E-Commerce Store</h1>
-      {loading ? <p>Loading...</p> : (
-        <div className="products">
-          {products.length === 0 ? (
-            <p>No products available</p>
-          ) : (
-            products.map(product => (
-              <div key={product._id} className="product-card">
-                <h3>{product.name}</h3>
-                <p>{product.description}</p>
-                <p>Price: ${product.price}</p>
-                <p>Stock: {product.stock}</p>
-              </div>
-            ))
-          )}
-        </div>
-      )}
-    </div>
+    <BrowserRouter>
+      <Navbar cartCount={cartCount} />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/products" element={<Products />} />
+        <Route path="/products/:id" element={<ProductDetail />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
-
-export default App
