@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
-import { NavLink } from 'react-router-dom'
-import './Navbar.css'
+import React, { useState } from 'react';
+import { NavLink } from 'react-router-dom';
+import './Navbar.css';
 
 export default function Navbar({ cartCount = 0 }) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
   return (
     <header className="navbar">
@@ -29,5 +29,5 @@ export default function Navbar({ cartCount = 0 }) {
         </nav>
       </div>
     </header>
-  )
+  );
 }

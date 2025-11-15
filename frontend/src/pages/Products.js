@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 export default function Products() {
   return (
@@ -6,5 +6,5 @@ export default function Products() {
       <h2>Products</h2>
       <p>Product listing will appear here. Connects to `/api/products`.</p>
     </main>
-  )
+  );
 }

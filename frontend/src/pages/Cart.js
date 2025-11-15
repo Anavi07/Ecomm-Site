@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 export default function Cart() {
   return (
@@ -6,5 +6,5 @@ export default function Cart() {
       <h2>Your Cart</h2>
       <p>Your cart is empty.</p>
     </main>
-  )
+  );
 }

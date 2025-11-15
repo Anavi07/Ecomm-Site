@@ -1,5 +1,5 @@
-import React from 'react'
-import './Home.css'
+import React from 'react';
+import './Home.css';
 
 export default function Home() {
   const featured = [
@@ -7,7 +7,7 @@ export default function Home() {
     { id: 2, name: 'Classic Watch', price: 129 },
     { id: 3, name: 'Leather Bag', price: 99 },
     { id: 4, name: 'Wireless Earbuds', price: 79 },
-  ]
+  ];
 
   return (
     <main className="home-page">
@@ -49,5 +49,5 @@ export default function Home() {
         </div>
       </section>
     </main>
-  )
+  );
 }
