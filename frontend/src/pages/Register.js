@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { userAPI } from '../services/api';
+import { userAPI, setAuthToken } from '../services/api';
 
 export default function Register() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [address, setAddress] = useState('');
+  const [role, setRole] = useState('customer');
+  const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -16,9 +18,9 @@ export default function Register() {
     setError('');
     setLoading(true);
     try {
-      const res = await userAPI.register({ name, email, password, address });
+      const res = await userAPI.register({ name, email, password, address, role, phone });
       if (res?.data?.success) {
-        // Optionally persist user locally
+        // Save user to localStorage
         localStorage.setItem('user', JSON.stringify(res.data.data));
         setLoading(false);
         navigate('/');
@@ -67,6 +69,16 @@ export default function Register() {
           />
         </div>
         <div style={{ marginBottom: 10 }}>
+          <label>Phone</label>
+          <input
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="Optional"
+            style={{ width: '100%', padding: 8 }}
+          />
+        </div>
+        <div style={{ marginBottom: 10 }}>
           <label>Address</label>
           <input
             type="text"
@@ -75,6 +87,14 @@ export default function Register() {
             placeholder="Street, City"
             style={{ width: '100%', padding: 8 }}
           />
+        </div>
+        <div style={{ marginBottom: 10 }}>
+          <label>Role</label>
+          <select value={role} onChange={(e) => setRole(e.target.value)} style={{ width: '100%', padding: 8 }}>
+            <option value="customer">Customer</option>
+            <option value="vendor">Vendor</option>
+            <option value="admin">Admin</option>
+          </select>
         </div>
         {error && <div style={{ color: 'red', marginBottom: 10 }}>{error}</div>}
         <button type="submit" disabled={loading} style={{ padding: '8px 16px' }}>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
@@ -8,11 +8,20 @@ import Cart from './pages/Cart';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import NotFound from './pages/NotFound';
+import { setAuthToken, getAuthToken } from './services/api';
 import './App.css';
 
 function App() {
   const [cart, setCart] = useState([]);
   const [cartCount, setCartCount] = useState(0);
+
+  // Initialize auth token from localStorage on app load
+  useEffect(() => {
+    const token = getAuthToken();
+    if (token) {
+      setAuthToken(token);
+    }
+  }, []);
 
   const handleAddToCart = (product) => {
     const existing = cart.find(item => item._id === product._id);

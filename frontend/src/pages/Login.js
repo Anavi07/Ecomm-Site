@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { userAPI } from '../services/api';
+import { userAPI, setAuthToken } from '../services/api';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -16,8 +16,12 @@ export default function Login() {
     try {
       const res = await userAPI.login(email, password);
       if (res?.data?.success) {
-        // Save user to localStorage
-        localStorage.setItem('user', JSON.stringify(res.data.data));
+        // Save token and user to localStorage
+        const { token, data } = res.data;
+        if (token) {
+          setAuthToken(token); // Store token in localStorage and set axios header
+        }
+        localStorage.setItem('user', JSON.stringify(data));
         setLoading(false);
         navigate('/');
       } else {
