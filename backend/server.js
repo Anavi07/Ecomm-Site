@@ -4,6 +4,11 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
+
+// Validate environment variables (especially in production)
+const validateEnv = require('./config/validateEnv');
+validateEnv();
+
 const connectDB = require('./config/db');
 
 const app = express();
@@ -11,18 +16,46 @@ const app = express();
 // Connect to MongoDB
 connectDB();
 
-// CORS Middleware - Enabled for http://localhost:3000
+// CORS Middleware - Configured for production and development
+const allowedOrigins = process.env.FRONTEND_URL 
+  ? [process.env.FRONTEND_URL] 
+  : ['http://localhost:3000'];
+
+// Support multiple origins if needed (comma-separated)
+const corsOrigins = process.env.FRONTEND_URL?.includes(',')
+  ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
+  : allowedOrigins;
+
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (corsOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV !== 'production') {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
 
 // Cookie Parser Middleware (required for signed cookies in cookieAuth)
-app.use(cookieParser(process.env.COOKIE_SECRET || 'your-cookie-secret'));
+const cookieSecret = process.env.COOKIE_SECRET;
+if (!cookieSecret && process.env.NODE_ENV === 'production') {
+  console.error('❌ ERROR: COOKIE_SECRET environment variable is required in production!');
+  process.exit(1);
+}
+app.use(cookieParser(cookieSecret || 'your-cookie-secret'));
 
 // Session Configuration
+const sessionSecret = process.env.SESSION_SECRET;
+if (!sessionSecret && process.env.NODE_ENV === 'production') {
+  console.error('❌ ERROR: SESSION_SECRET environment variable is required in production!');
+  process.exit(1);
+}
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'your-session-secret-change-in-production',
+  secret: sessionSecret || 'your-session-secret-change-in-production',
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
