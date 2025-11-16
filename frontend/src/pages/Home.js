@@ -1,13 +1,31 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './Home.css';
 
-export default function Home() {
-  const featured = [
-    { id: 1, name: 'Comfort Sneakers', price: 59 },
-    { id: 2, name: 'Classic Watch', price: 129 },
-    { id: 3, name: 'Leather Bag', price: 99 },
-    { id: 4, name: 'Wireless Earbuds', price: 79 },
-  ];
+export default function Home({ onAddToCart }) {
+  const [featured, setFeatured] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
+  useEffect(() => {
+    let mounted = true;
+    const fetchFeatured = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(`${API_BASE}/api/products?limit=4`);
+        if (!res.ok) throw new Error('Failed to load featured products');
+        const body = await res.json();
+        if (mounted) setFeatured(body.data || []);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+    fetchFeatured();
+    return () => { mounted = false; };
+  }, [API_BASE]);
 
   return (
     <main className="home-page">
@@ -21,13 +39,24 @@ export default function Home() {
 
       <section className="featured">
         <h2>Featured Products</h2>
+        {loading && <p className="muted">Loading featured products...</p>}
         <div className="grid">
           {featured.map(p => (
-            <div className="card" key={p.id}>
-              <div className="thumb" />
-              <h3>{p.name}</h3>
-              <p className="price">${p.price}</p>
-              <button className="btn">Add to cart</button>
+            <div className="card" key={p._id}>
+              <Link to={`/products/${p._id}`} className="thumb-link">
+                <div className="thumb" style={{
+                  backgroundImage: `url(${(p.images && p.images[0]) || '/placeholder.png'})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }} />
+              </Link>
+              <h3>
+                <Link to={`/products/${p._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                  {p.name}
+                </Link>
+              </h3>
+              <p className="price">₹{p.price}</p>
+              <button className="btn" onClick={() => onAddToCart && onAddToCart(p)}>Add to cart</button>
             </div>
           ))}
         </div>

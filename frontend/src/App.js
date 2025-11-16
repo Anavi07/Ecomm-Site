@@ -11,16 +11,27 @@ import NotFound from './pages/NotFound';
 import './App.css';
 
 function App() {
+  const [cart, setCart] = useState([]);
   const [cartCount, setCartCount] = useState(0);
+
+  const handleAddToCart = (product) => {
+    const existing = cart.find(item => item._id === product._id);
+    if (existing) {
+      setCart(cart.map(item => item._id === product._id ? { ...item, quantity: item.quantity + 1 } : item));
+    } else {
+      setCart([...cart, { ...product, quantity: 1 }]);
+    }
+    setCartCount(cart.length + 1);
+  };
 
   return (
     <BrowserRouter>
       <Navbar cartCount={cartCount} />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home onAddToCart={handleAddToCart} />} />
         <Route path="/products" element={<Products />} />
-        <Route path="/products/:id" element={<ProductDetail />} />
-        <Route path="/cart" element={<Cart />} />
+        <Route path="/products/:id" element={<ProductDetail onAddToCart={handleAddToCart} />} />
+        <Route path="/cart" element={<Cart cart={cart} setCart={setCart} setCartCount={setCartCount} />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="*" element={<NotFound />} />
