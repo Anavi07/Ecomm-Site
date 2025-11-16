@@ -62,7 +62,7 @@ const sampleProducts = [
     category: 'Accessories',
     stock: 120,
     images: [
-      'https://images.unsplash.com/photo-1585468274515-7e0e33cbf024?w=500',
+      'https://www.portronics.com/cdn/shop/products/Modesk-1.jpg?v=1647446052',
     ],
   },
   {
@@ -82,7 +82,7 @@ const sampleProducts = [
     category: 'Electronics',
     stock: 30,
     images: [
-      'https://images.unsplash.com/photo-1587829191301-3b13992c5c51?w=500',
+      'https://images.unsplash.com/photo-1602025882379-e01cf08baa51?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     ],
   },
 ];
