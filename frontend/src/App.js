@@ -8,6 +8,7 @@ import Cart from './pages/Cart';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import NotFound from './pages/NotFound';
+import AuthDemo from './components/AuthDemo';
 import { AuthProvider } from './context/AuthContext';
 import { setAuthToken, getAuthToken } from './services/api';
 import './App.css';
@@ -44,6 +45,7 @@ function AppContent() {
         <Route path="/cart" element={<Cart cart={cart} setCart={setCart} setCartCount={setCartCount} />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/auth-demo" element={<AuthDemo />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

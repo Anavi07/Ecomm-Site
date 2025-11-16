@@ -28,6 +28,7 @@ export default function Navbar({ cartCount = 0 }) {
         <nav className={`nav-links ${open ? 'open' : ''}`}>
           <NavLink to="/" className={({isActive}) => isActive ? 'active' : ''}>Home</NavLink>
           <NavLink to="/products" className={({isActive}) => isActive ? 'active' : ''}>Products</NavLink>
+          <NavLink to="/auth-demo" className={({isActive}) => isActive ? 'active' : ''}>Auth Demo</NavLink>
           <NavLink to="/cart" className={({isActive}) => isActive ? 'active cart-link' : 'cart-link'}>
             Cart <span className="cart-badge">{cartCount}</span>
           </NavLink>

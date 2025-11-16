@@ -8,10 +8,10 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
 const REFRESH_SECRET = process.env.REFRESH_SECRET || 'your_refresh_secret_key';
 
 /**
- * POST /auth/jwt/login
+ * POST /login
  * Validates credentials and returns access token + refresh token
  */
-router.post('/jwt/login', async (req, res) => {
+router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -22,7 +22,6 @@ router.post('/jwt/login', async (req, res) => {
       });
     }
 
-    // Find user and verify password
     const user = await User.findOne({ email }).select('+password');
     if (!user) {
       return res.status(401).json({
@@ -82,10 +81,10 @@ router.post('/jwt/login', async (req, res) => {
 });
 
 /**
- * POST /auth/jwt/refresh
+ * POST /refresh
  * Accepts refresh token and returns new access token
  */
-router.post('/jwt/refresh', async (req, res) => {
+router.post('/refresh', async (req, res) => {
   try {
     const { refreshToken } = req.body;
 
@@ -158,10 +157,10 @@ router.post('/jwt/refresh', async (req, res) => {
 });
 
 /**
- * POST /auth/jwt/logout
+ * POST /logout
  * Revokes refresh token (adds to blacklist)
  */
-router.post('/jwt/logout', async (req, res) => {
+router.post('/logout', async (req, res) => {
   try {
     const { refreshToken } = req.body;
 
@@ -194,6 +193,56 @@ router.post('/jwt/logout', async (req, res) => {
     res.status(500).json({
       success: false,
       message: err.message,
+    });
+  }
+});
+
+/**
+ * GET /me
+ * Returns current user info using JWT token
+ */
+router.get('/me', async (req, res) => {
+  try {
+    // Extract token from Authorization header
+    const token = req.headers.authorization?.split(' ')[1];
+
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: 'No token provided. Authorization required.',
+      });
+    }
+
+    // Verify JWT token
+    const decoded = jwt.verify(token, JWT_SECRET);
+    
+    // Get user from database
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    const userData = user.toObject();
+    delete userData.password;
+
+    res.json({
+      success: true,
+      data: userData,
+      authMethod: 'JWT'
+    });
+  } catch (err) {
+    if (err.name === 'TokenExpiredError') {
+      return res.status(403).json({
+        success: false,
+        message: 'Token has expired',
+      });
+    }
+    return res.status(401).json({
+      success: false,
+      message: 'Invalid token',
     });
   }
 });
