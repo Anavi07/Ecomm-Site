@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
 require('dotenv').config();
 const connectDB = require('./config/db');
 
@@ -12,6 +14,23 @@ connectDB();
 app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true,
+}));
+
+// Session Middleware
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'your_session_secret_key',
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGODB_URI,
+    ttl: 14 * 24 * 60 * 60, // 14 days
+  }),
+  cookie: {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 14 * 24 * 60 * 60 * 1000, // 14 days
+    sameSite: 'lax',
+  },
 }));
 
 // JSON Body Parser Middleware
@@ -27,6 +46,10 @@ app.get('/api/test', (req, res) => {
 app.get('/api/health', (req, res) => {
   res.json({ message: 'Server is running' });
 });
+
+// Auth routes (cookie-based and JWT)
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/auth', require('./routes/authJWT'));
 
 // Combined API routes (products, users, orders) with logging
 app.use('/api', require('./routes'));
