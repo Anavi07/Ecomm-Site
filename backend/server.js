@@ -1,5 +1,8 @@
 const express = require('express');
 const cors = require('cors');
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
+const cookieParser = require('cookie-parser');
 require('dotenv').config();
 const connectDB = require('./config/db');
 
@@ -12,6 +15,26 @@ connectDB();
 app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true,
+}));
+
+// Cookie Parser Middleware
+app.use(cookieParser(process.env.COOKIE_SECRET || 'your-cookie-secret'));
+
+// Session Configuration
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'your-session-secret-change-in-production',
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGODB_URI,
+    collectionName: 'sessions'
+  }),
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+    sameSite: 'lax'
+  }
 }));
 
 // JSON Body Parser Middleware
