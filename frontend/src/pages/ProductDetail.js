@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import CartButton from '../components/CartButton';
 
-export default function ProductDetail({ onAddToCart }) {
+export default function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
@@ -52,23 +53,12 @@ export default function ProductDetail({ onAddToCart }) {
           <p style={{fontSize:'14px', color:'#ff9800'}}>⭐ {product.ratings ? product.ratings.toFixed(1) : '0.0'} ({product.reviews ? product.reviews.length : 0} reviews)</p>
           <p style={{margin:'16px 0', lineHeight:'1.6'}}>{product.description}</p>
           <p style={{marginBottom:'16px'}}><strong>Stock: </strong>{product.stock > 0 ? `${product.stock} available` : 'Out of stock'}</p>
-          <button
-            onClick={() => onAddToCart && onAddToCart(product)}
-            style={{
-              padding:'12px 24px',
-              fontSize:'16px',
-              fontWeight:'bold',
-              backgroundColor:'#0a7f3e',
-              color:'#fff',
-              border:'none',
-              borderRadius:'4px',
-              cursor:'pointer',
-              marginBottom:'24px',
-            }}
+          <CartButton 
+            product={product}
             disabled={product.stock <= 0}
           >
             {product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
-          </button>
+          </CartButton>
           {product.reviews && product.reviews.length > 0 && (
             <div style={{marginTop:'32px', borderTop:'1px solid #e6e6e6', paddingTop:'16px'}}>
               <h3>Reviews</h3>

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import CartButton from '../components/CartButton';
 import './Home.css';
 
-export default function Home({ onAddToCart }) {
+export default function Home() {
   const [featured, setFeatured] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -56,7 +57,7 @@ export default function Home({ onAddToCart }) {
                 </Link>
               </h3>
               <p className="price">₹{p.price}</p>
-              <button className="btn" onClick={() => onAddToCart && onAddToCart(p)}>Add to cart</button>
+              <CartButton product={p}>Add to cart</CartButton>
             </div>
           ))}
         </div>
@@ -74,7 +75,7 @@ export default function Home({ onAddToCart }) {
 
       <section className="promo">
         <div className="promo-inner">
-          <h3>Limited time: Free shipping on orders over $50</h3>
+          <h3>Limited time: Free shipping on orders over ₹2000</h3>
         </div>
       </section>
     </main>
