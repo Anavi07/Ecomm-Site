@@ -56,10 +56,11 @@ exports.getProduct = async (req, res) => {
   }
 };
 
-// Create product (admin only)
+// Create product (admin and vendor only)
 exports.createProduct = async (req, res) => {
   try {
     const { name, description, price, category, stock, images } = req.body;
+    const vendorId = req.user.id; // From JWT token
 
     // Validation
     if (!name || !description || !price || !category) {
@@ -76,21 +77,31 @@ exports.createProduct = async (req, res) => {
       category,
       stock: stock || 0,
       images: images || [],
+      vendor: vendorId,
     });
 
     const newProduct = await product.save();
+    await newProduct.populate('vendor', 'name email');
     res.status(201).json({ success: true, data: newProduct });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
   }
 };
 
-// Update product (admin only)
+// Update product (admin and vendor - vendor can only edit their own products)
 exports.updateProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
     if (!product) {
       return res.status(404).json({ success: false, message: 'Product not found' });
+    }
+
+    // Check authorization: vendor can only update their own products, admin can update all
+    if (req.user.role === 'vendor' && product.vendor.toString() !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: 'You can only update your own products',
+      });
     }
 
     // Update allowed fields
@@ -103,6 +114,7 @@ exports.updateProduct = async (req, res) => {
 
     product.updatedAt = Date.now();
     const updatedProduct = await product.save();
+    await updatedProduct.populate('vendor', 'name email');
     res.json({ success: true, data: updatedProduct });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });

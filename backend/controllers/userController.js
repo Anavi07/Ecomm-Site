@@ -183,7 +183,7 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
-// Login user (basic, returns user data without token)
+// Login user (returns JWT token)
 exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -211,12 +211,16 @@ exports.loginUser = async (req, res) => {
       });
     }
 
+    // Generate JWT token
+    const token = user.generateJWT();
+
     const userData = user.toObject();
     delete userData.password;
 
     res.json({
       success: true,
       message: 'Login successful',
+      token,
       data: userData,
     });
   } catch (err) {
