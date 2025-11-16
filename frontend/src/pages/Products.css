@@ -1,0 +1,64 @@
+/* Simple styling for products grid */
+.products-page .container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 0 16px;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.product-card {
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow .15s ease;
+}
+
+.product-card:hover {
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+.image-wrap {
+  display: block;
+  width: 100%;
+  height: 160px;
+  overflow: hidden;
+  background: #f8f8f8;
+}
+
+.image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.product-body {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.product-title {
+  font-size: 16px;
+  margin: 0;
+}
+
+.product-title a { color: #222; text-decoration: none; }
+.product-category { color: #666; font-size: 13px; margin: 0; }
+
+.product-meta { display:flex; justify-content:space-between; align-items:center; margin-top:8px; }
+.price { font-weight:600; color:#0a7f3e; }
+.rating { font-size:13px; color:#ff9800; }
+
+.muted { color:#666; }
+.error { color:#b00020; }

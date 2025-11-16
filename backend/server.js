@@ -28,33 +28,12 @@ app.get('/api/health', (req, res) => {
   res.json({ message: 'Server is running' });
 });
 
-// Routes
-app.use('/api/products', require('./routes/products'));
+// Combined API routes (products, users, orders) with logging
+app.use('/api', require('./routes'));
 
 // Error Handling Middleware
-app.use((err, req, res, next) => {
-  console.error('Error:', err);
-  
-  // Mongoose validation error
-  if (err.name === 'ValidationError') {
-    return res.status(400).json({ 
-      message: 'Validation error', 
-      errors: err.errors 
-    });
-  }
-  
-  // Mongoose cast error
-  if (err.name === 'CastError') {
-    return res.status(400).json({ 
-      message: 'Invalid ID format' 
-    });
-  }
-  
-  // Default error
-  res.status(err.status || 500).json({ 
-    message: err.message || 'Internal Server Error' 
-  });
-});
+const errorHandler = require('./middleware/errorHandler');
+app.use(errorHandler);
 
 // 404 Not Found Middleware
 app.use((req, res) => {
