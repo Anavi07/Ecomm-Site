@@ -3,7 +3,7 @@ const User = require('../models/User');
 // Register user
 exports.registerUser = async (req, res) => {
   try {
-    const { name, email, password, address } = req.body;
+    const { name, email, password, address, role, phone } = req.body;
 
     // Validation
     if (!name || !email || !password) {
@@ -22,8 +22,15 @@ exports.registerUser = async (req, res) => {
       });
     }
 
-    // Create user
-    user = new User({ name, email, password, address: address || '' });
+    // Create user with optional role and phone
+    user = new User({
+      name,
+      email,
+      password,
+      address: address || '',
+      phone: phone || '',
+      role: role || 'customer', // Allow role specification; default to 'customer'
+    });
     await user.save();
 
     // Return user without password
