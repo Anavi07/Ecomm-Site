@@ -8,10 +8,11 @@ import Cart from './pages/Cart';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import NotFound from './pages/NotFound';
+import { AuthProvider } from './context/AuthContext';
 import { setAuthToken, getAuthToken } from './services/api';
 import './App.css';
 
-function App() {
+function AppContent() {
   const [cart, setCart] = useState([]);
   const [cartCount, setCartCount] = useState(0);
 
@@ -46,6 +47,14 @@ function App() {
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 

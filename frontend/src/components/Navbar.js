@@ -1,23 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { clearAuth } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import './Navbar.css';
 
 export default function Navbar({ cartCount = 0 }) {
   const [open, setOpen] = useState(false);
-  const [user, setUser] = useState(null);
+  const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
-
   const handleLogout = () => {
-    clearAuth();
-    setUser(null);
+    logout();
     setOpen(false);
     navigate('/');
   };
@@ -40,7 +32,7 @@ export default function Navbar({ cartCount = 0 }) {
             Cart <span className="cart-badge">{cartCount}</span>
           </NavLink>
           <div className="auth-links">
-            {user ? (
+            {isAuthenticated && user ? (
               <>
                 <span style={{ padding: '8px 16px', fontSize: '14px' }}>
                   {user.name} ({user.role})
